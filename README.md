@@ -11,7 +11,7 @@ Sistem admin toko sederhana dengan fitur manajemen pembelian dan Chatbot AI berb
 - **Manajemen Pembelian** – input pembelian baru, cancel pembelian (stok otomatis dikembalikan), filter & cari, detail transaksi
 
 ### Chatbot AI (`/chatbot`)
-- Interface chat modern dengan GROQ API (model: llama3-8b-8192)
+- Interface chat modern dengan GROQ API (model: llama-3.1-8b-instant)
 - Quick suggestion buttons
 - Riwayat percakapan per sesi
 - Typing indicator animasi
@@ -27,14 +27,14 @@ Sistem admin toko sederhana dengan fitur manajemen pembelian dan Chatbot AI berb
 ## 🚀 Cara Menjalankan
 
 ### Prasyarat
-- Node.js v16+
+- Node.js v22
 - npm
 
 ### Instalasi
 
 ```bash
 # 1. Clone repositori
-git clone https://github.com/username/toko-admin-chatbot.git
+git clone https://github.com/tomflutter/xionco.git
 cd toko-admin-chatbot
 
 # 2. Install dependensi
@@ -54,18 +54,6 @@ npx nodemon app.js
 - **Admin Panel** : http://localhost:3000/admin
 - **Chatbot**     : http://localhost:3000/chatbot
 
-## 🌐 Deploy ke serv00
-
-```bash
-# Di serv00, set environment variable:
-export GROQ_API_KEY=your_groq_api_key_here
-export PORT=3000
-
-# Jalankan dari direktori aplikasi:
-cd ~/domains/demo.votm.biz.id/public_nodejs
-node app.js
-```
-
 ## 🔑 Mendapatkan GROQ API Key
 
 1. Daftar di https://console.groq.com
@@ -78,7 +66,7 @@ node app.js
 toko-admin-chatbot/
 ├── app.js                  # Entry point Express
 ├── package.json
-├── .env.example            # Contoh konfigurasi
+├── .env.example            # example konfigurasi
 ├── db/
 │   └── database.js         # Inisialisasi & helper SQL.js
 ├── routes/
@@ -110,7 +98,7 @@ toko-admin-chatbot/
 - **Backend**: Node.js, Express.js
 - **Template Engine**: EJS
 - **Database**: SQL.js (SQLite murni JavaScript, tanpa native binding)
-- **AI**: GROQ API (model llama3-8b-8192)
+- **AI**: GROQ API (model llama-3.1-8b-instant)
 - **Frontend**: Vanilla CSS + JS (dark theme)
 
 ## 📝 Catatan
