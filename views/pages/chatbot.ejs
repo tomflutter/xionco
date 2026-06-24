@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TokoBot – AI Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/chatbot.css">
+</head>
+<body class="chatbot-body">
+
+<div class="chat-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">🏪</span>
+      <span class="brand-name">TokoAdmin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin" class="nav-item">
+        <span class="nav-icon">📊</span><span>Dashboard</span>
+      </a>
+      <a href="/admin/produk" class="nav-item">
+        <span class="nav-icon">📦</span><span>Produk</span>
+      </a>
+      <a href="/admin/stok" class="nav-item">
+        <span class="nav-icon">🗄️</span><span>Stok</span>
+      </a>
+      <a href="/admin/pembelian" class="nav-item">
+        <span class="nav-icon">🛒</span><span>Pembelian</span>
+      </a>
+      <div class="nav-divider"></div>
+      <a href="/chatbot" class="nav-item active">
+        <span class="nav-icon">🤖</span><span>Chatbot AI</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer"><span>v1.0.0 • serv00</span></div>
+  </aside>
+
+  <!-- Chat Area -->
+  <div class="chat-container">
+    <div class="chat-header">
+      <div class="bot-avatar">🤖</div>
+      <div class="bot-info">
+        <div class="bot-name">TokoBot</div>
+        <div class="bot-status"><span class="status-dot"></span> Powered by GROQ AI</div>
+      </div>
+      <button class="btn btn-sm btn-outline" onclick="clearChat()">🗑️ Bersihkan</button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <!-- Welcome Message -->
+      <div class="msg-wrapper bot-wrapper">
+        <div class="msg-avatar">🤖</div>
+        <div class="msg bot-msg">
+          <p>Halo! Saya <strong>TokoBot</strong>, asisten AI toko kami 👋</p>
+          <p>Saya bisa membantu Anda dengan:</p>
+          <ul>
+            <li>📦 Informasi produk & stok</li>
+            <li>🛒 Cara melakukan pembelian</li>
+            <li>❓ Pertanyaan umum tentang toko</li>
+            <li>💡 Rekomendasi produk</li>
+          </ul>
+          <p>Ada yang bisa saya bantu?</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Suggestions -->
+    <div class="quick-suggestions" id="quick-suggestions">
+      <button class="suggestion-btn" onclick="sendSuggestion('Produk apa saja yang tersedia?')">📦 Produk apa saja?</button>
+      <button class="suggestion-btn" onclick="sendSuggestion('Bagaimana cara melakukan pembelian?')">🛒 Cara pembelian</button>
+      <button class="suggestion-btn" onclick="sendSuggestion('Produk elektronik terbaik yang direkomendasikan?')">⭐ Rekomendasi produk</button>
+    </div>
+
+    <div class="chat-input-area">
+      <div id="api-warning" class="api-warning" style="display:none">
+        ⚠️ <strong>GROQ API Key belum dikonfigurasi.</strong> 
+        Set environment variable <code>GROQ_API_KEY</code> untuk mengaktifkan chatbot.
+      </div>
+      <div class="input-wrapper">
+        <textarea 
+          id="chat-input" 
+          placeholder="Ketik pesan Anda..." 
+          rows="1"
+          onkeydown="handleKeydown(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">
+          <span>➤</span>
+        </button>
+      </div>
+      <div class="input-hint">Enter untuk kirim • Shift+Enter untuk baris baru</div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/chatbot.js"></script>
+</body>
+</html>

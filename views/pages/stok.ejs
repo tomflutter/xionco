@@ -1,0 +1,99 @@
+<%- include('../partials/header') %>
+
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">🗄️ Status Stok Produk</h2>
+    <a href="/admin/produk" class="btn btn-sm btn-outline">Kelola Produk</a>
+  </div>
+  <div class="stok-legend">
+    <span class="badge badge-red">🔴 Kritis (&lt;=5)</span>
+    <span class="badge badge-yellow">🟡 Menipis (6-15)</span>
+    <span class="badge badge-green">🟢 Aman (&gt;15)</span>
+  </div>
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nama Produk</th>
+          <th>Kategori</th>
+          <th>Harga Satuan</th>
+          <th>Stok</th>
+          <th>Status</th>
+          <th>Update Terakhir</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% stok.forEach((s, i) => { %>
+        <tr>
+          <td class="text-muted"><%= i+1 %></td>
+          <td><strong><%= s.nama %></strong></td>
+          <td><span class="badge badge-outline"><%= s.kategori %></span></td>
+          <td>Rp <%= s.harga.toLocaleString('id-ID') %></td>
+          <td>
+            <span class="stok-number <%= s.jumlah <= 5 ? 'text-red' : s.jumlah <= 15 ? 'text-yellow' : 'text-green' %>">
+              <%= s.jumlah %>
+            </span>
+          </td>
+          <td>
+            <% if (s.jumlah <= 5) { %>
+              <span class="badge badge-red">🔴 Kritis</span>
+            <% } else if (s.jumlah <= 15) { %>
+              <span class="badge badge-yellow">🟡 Menipis</span>
+            <% } else { %>
+              <span class="badge badge-green">🟢 Aman</span>
+            <% } %>
+          </td>
+          <td class="text-xs text-muted"><%= s.updated_at ? new Date(s.updated_at).toLocaleDateString('id-ID') : '-' %></td>
+          <td>
+            <button class="btn btn-sm btn-outline" onclick="openUpdateStok(<%= s.id %>, '<%= s.nama.replace(/'/g, "\\'") %>', <%= s.jumlah %>)">
+              ✏️ Update
+            </button>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Update Stok -->
+<div class="modal-overlay" id="modal-stok">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3>Update Stok</h3>
+      <button class="modal-close" onclick="closeModal('modal-stok')">✕</button>
+    </div>
+    <div class="modal-subtitle" id="modal-stok-nama"></div>
+    <form id="form-stok" method="POST" class="modal-form">
+      <div class="form-group">
+        <label>Jumlah Stok Baru</label>
+        <input type="number" name="jumlah" id="input-stok-baru" min="0" required>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-stok')">Batal</button>
+        <button type="submit" class="btn btn-primary">Update Stok</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openUpdateStok(id, nama, stok) {
+  document.getElementById('modal-stok-nama').textContent = nama;
+  document.getElementById('input-stok-baru').value = stok;
+  document.getElementById('form-stok').action = `/admin/produk/${id}/update-stok`;
+  openModal('modal-stok');
+}
+const params = new URLSearchParams(window.location.search);
+if (params.get('success')) {
+  const el = document.createElement('div');
+  el.className = 'alert alert-success';
+  el.textContent = '✅ ' + decodeURIComponent(params.get('success'));
+  document.querySelector('.card').before(el);
+  setTimeout(() => el.remove(), 4000);
+}
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,20 @@
+{
+  "name": "toko-admin-chatbot",
+  "version": "1.0.0",
+  "description": "Admin Panel Pembelian + Chatbot AI (GROQ) - Node.js/Express/EJS",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.18.3",
+    "method-override": "^3.0.0",
+    "node-fetch": "^2.7.0",
+    "sql.js": "^1.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> – TokoAdmin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">🏪</span>
+      <span class="brand-name">TokoAdmin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin" class="nav-item <%= active === 'dashboard' ? 'active' : '' %>">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="/admin/produk" class="nav-item <%= active === 'produk' ? 'active' : '' %>">
+        <span class="nav-icon">📦</span>
+        <span>Produk</span>
+      </a>
+      <a href="/admin/stok" class="nav-item <%= active === 'stok' ? 'active' : '' %>">
+        <span class="nav-icon">🗄️</span>
+        <span>Stok</span>
+      </a>
+      <a href="/admin/pembelian" class="nav-item <%= active === 'pembelian' ? 'active' : '' %>">
+        <span class="nav-icon">🛒</span>
+        <span>Pembelian</span>
+      </a>
+      <div class="nav-divider"></div>
+      <a href="/chatbot" class="nav-item <%= active === 'chatbot' ? 'active' : '' %>">
+        <span class="nav-icon">🤖</span>
+        <span>Chatbot AI</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <span>v1.0.0 • serv00</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1><%= title %></h1>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-date" id="topbar-date"></span>
+        <div class="admin-badge">
+          <span class="admin-dot"></span>
+          <span>Admin</span>
+        </div>
+      </div>
+    </header>
+    <main class="content">

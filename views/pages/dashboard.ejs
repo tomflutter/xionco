@@ -1,0 +1,101 @@
+<%- include('../partials/header') %>
+
+<div class="dashboard-grid">
+  <!-- Stats Cards -->
+  <div class="stats-row">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon">📦</div>
+      <div class="stat-body">
+        <div class="stat-value"><%= stats.produk %></div>
+        <div class="stat-label">Total Produk</div>
+      </div>
+    </div>
+    <div class="stat-card stat-green">
+      <div class="stat-icon">✅</div>
+      <div class="stat-body">
+        <div class="stat-value"><%= stats.aktif %></div>
+        <div class="stat-label">Pembelian Aktif</div>
+      </div>
+    </div>
+    <div class="stat-card stat-red">
+      <div class="stat-icon">❌</div>
+      <div class="stat-body">
+        <div class="stat-value"><%= stats.cancel %></div>
+        <div class="stat-label">Pembelian Cancel</div>
+      </div>
+    </div>
+    <div class="stat-card stat-purple">
+      <div class="stat-icon">💰</div>
+      <div class="stat-body">
+        <div class="stat-value">Rp <%= stats.pendapatan.toLocaleString('id-ID') %></div>
+        <div class="stat-label">Total Pendapatan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transaksi Terbaru -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">🛒 Transaksi Terbaru</h2>
+      <a href="/admin/pembelian" class="btn btn-sm btn-outline">Lihat Semua</a>
+    </div>
+    <% if (recentPembelian.length === 0) { %>
+      <div class="empty-state">Belum ada transaksi</div>
+    <% } else { %>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>No. Transaksi</th>
+            <th>Pembeli</th>
+            <th>Produk</th>
+            <th>Jumlah</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% recentPembelian.forEach(p => { %>
+          <tr>
+            <td><code class="trx-code"><%= p.nomor_transaksi %></code></td>
+            <td><%= p.nama_pembeli %></td>
+            <td><%= p.nama_produk %></td>
+            <td><%= p.jumlah %></td>
+            <td>Rp <%= p.total_harga.toLocaleString('id-ID') %></td>
+            <td><span class="badge badge-<%= p.status === 'aktif' ? 'green' : 'red' %>"><%= p.status %></span></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+
+  <!-- Stok Menipis -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">⚠️ Stok Menipis</h2>
+      <a href="/admin/stok" class="btn btn-sm btn-outline">Kelola Stok</a>
+    </div>
+    <% if (stokRendah.length === 0) { %>
+      <div class="empty-state">✅ Semua stok aman</div>
+    <% } else { %>
+    <div class="stok-warning-list">
+      <% stokRendah.forEach(s => { %>
+      <div class="stok-warning-item">
+        <span class="stok-warning-nama"><%= s.nama %></span>
+        <span class="stok-warning-badge <%= s.jumlah <= 5 ? 'badge-red' : 'badge-yellow' %>">
+          Sisa <%= s.jumlah %> unit
+        </span>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<script>
+document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+</script>
+
+<%- include('../partials/footer') %>

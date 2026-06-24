@@ -1,0 +1,152 @@
+<%- include('../partials/header') %>
+
+<% if (query && query.success) { %>
+<div class="alert alert-success">✅ <%= query.success %></div>
+<% } %>
+<% if (query && query.error) { %>
+<div class="alert alert-error">❌ <%= query.error %></div>
+<% } %>
+
+<div class="page-actions">
+  <button class="btn btn-primary" onclick="openModal('modal-tambah')">+ Tambah Produk</button>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">📦 Daftar Produk</h2>
+    <span class="badge badge-blue"><%= produk.length %> produk</span>
+  </div>
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nama Produk</th>
+          <th>Kategori</th>
+          <th>Harga</th>
+          <th>Stok</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% produk.forEach(p => { %>
+        <tr>
+          <td><span class="text-muted">#<%= p.id %></span></td>
+          <td>
+            <div class="produk-name"><%= p.nama %></div>
+            <div class="produk-desc text-muted"><%= p.deskripsi ? p.deskripsi.substring(0, 60) + '...' : '' %></div>
+          </td>
+          <td><span class="badge badge-outline"><%= p.kategori %></span></td>
+          <td>Rp <%= p.harga.toLocaleString('id-ID') %></td>
+          <td>
+            <span class="stok-badge <%= p.stok <= 5 ? 'badge-red' : p.stok <= 15 ? 'badge-yellow' : 'badge-green' %>">
+              <%= p.stok %> unit
+            </span>
+          </td>
+          <td class="action-cell">
+            <button class="btn btn-sm btn-outline" onclick="openUpdateStok(<%= p.id %>, '<%= p.nama.replace(/'/g, "\\'") %>', <%= p.stok %>)">
+              📦 Update Stok
+            </button>
+            <form action="/admin/produk/<%= p.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Hapus produk <%= p.nama %>?')">
+              <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Tambah Produk -->
+<div class="modal-overlay" id="modal-tambah">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Tambah Produk Baru</h3>
+      <button class="modal-close" onclick="closeModal('modal-tambah')">✕</button>
+    </div>
+    <form action="/admin/produk" method="POST" class="modal-form">
+      <div class="form-group">
+        <label>Nama Produk *</label>
+        <input type="text" name="nama" required placeholder="Contoh: Laptop ASUS VivoBook">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Kategori</label>
+          <select name="kategori">
+            <option value="Elektronik">Elektronik</option>
+            <option value="Aksesoris">Aksesoris</option>
+            <option value="Audio">Audio</option>
+            <option value="Storage">Storage</option>
+            <option value="Komponen">Komponen</option>
+            <option value="Jaringan">Jaringan</option>
+            <option value="Cetak">Cetak</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Harga (Rp) *</label>
+          <input type="number" name="harga" required min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Stok Awal</label>
+        <input type="number" name="stok" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label>Deskripsi</label>
+        <textarea name="deskripsi" rows="3" placeholder="Deskripsi produk..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-tambah')">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan Produk</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Update Stok -->
+<div class="modal-overlay" id="modal-stok">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3>Update Stok: <span id="stok-produk-nama"></span></h3>
+      <button class="modal-close" onclick="closeModal('modal-stok')">✕</button>
+    </div>
+    <form id="form-stok" method="POST" class="modal-form">
+      <div class="form-group">
+        <label>Jumlah Stok Baru</label>
+        <input type="number" name="jumlah" id="input-stok-baru" min="0" required>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-stok')">Batal</button>
+        <button type="submit" class="btn btn-primary">Update Stok</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openUpdateStok(id, nama, stok) {
+  document.getElementById('stok-produk-nama').textContent = nama;
+  document.getElementById('input-stok-baru').value = stok;
+  document.getElementById('form-stok').action = `/admin/produk/${id}/update-stok`;
+  openModal('modal-stok');
+}
+// Handle URL params for alerts
+const params = new URLSearchParams(window.location.search);
+if (params.get('success')) {
+  const el = document.createElement('div');
+  el.className = 'alert alert-success';
+  el.textContent = '✅ ' + params.get('success');
+  document.querySelector('.page-actions').before(el);
+  setTimeout(() => el.remove(), 4000);
+}
+if (params.get('error')) {
+  const el = document.createElement('div');
+  el.className = 'alert alert-error';
+  el.textContent = '❌ ' + params.get('error');
+  document.querySelector('.page-actions').before(el);
+}
+</script>
+
+<%- include('../partials/footer') %>

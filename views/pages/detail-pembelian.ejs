@@ -1,0 +1,68 @@
+<%- include('../partials/header') %>
+
+<a href="/admin/pembelian" class="btn btn-outline btn-sm mb-4">← Kembali</a>
+
+<div class="detail-grid">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">📋 Detail Transaksi</h2>
+      <span class="badge badge-<%= pembelian.status === 'aktif' ? 'green' : 'red' %> badge-lg">
+        <%= pembelian.status.toUpperCase() %>
+      </span>
+    </div>
+    <div class="detail-list">
+      <div class="detail-row">
+        <span class="detail-key">No. Transaksi</span>
+        <span class="detail-val"><code class="trx-code"><%= pembelian.nomor_transaksi %></code></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Nama Pembeli</span>
+        <span class="detail-val"><strong><%= pembelian.nama_pembeli %></strong></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Produk</span>
+        <span class="detail-val"><%= pembelian.nama_produk %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Kategori</span>
+        <span class="detail-val"><span class="badge badge-outline"><%= pembelian.kategori %></span></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Harga Satuan</span>
+        <span class="detail-val">Rp <%= pembelian.harga_satuan.toLocaleString('id-ID') %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Jumlah</span>
+        <span class="detail-val"><%= pembelian.jumlah %> unit</span>
+      </div>
+      <div class="detail-row detail-highlight">
+        <span class="detail-key">Total Harga</span>
+        <span class="detail-val text-lg"><strong>Rp <%= pembelian.total_harga.toLocaleString('id-ID') %></strong></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Catatan</span>
+        <span class="detail-val"><%= pembelian.catatan || '-' %></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Tanggal Beli</span>
+        <span class="detail-val"><%= new Date(pembelian.created_at).toLocaleString('id-ID') %></span>
+      </div>
+      <% if (pembelian.updated_at !== pembelian.created_at) { %>
+      <div class="detail-row">
+        <span class="detail-key">Diupdate</span>
+        <span class="detail-val"><%= new Date(pembelian.updated_at).toLocaleString('id-ID') %></span>
+      </div>
+      <% } %>
+    </div>
+    <% if (pembelian.status === 'aktif') { %>
+    <div class="card-footer">
+      <form action="/admin/pembelian/<%= pembelian.id %>/cancel" method="POST"
+            onsubmit="return confirm('Batalkan pembelian ini?\nStok akan dikembalikan ke inventori.')">
+        <button type="submit" class="btn btn-danger">❌ Batalkan Pembelian</button>
+      </form>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

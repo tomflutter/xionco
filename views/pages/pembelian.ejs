@@ -1,0 +1,151 @@
+<%- include('../partials/header') %>
+
+<div class="page-actions">
+  <div class="filter-bar">
+    <form action="/admin/pembelian" method="GET" class="filter-form">
+      <select name="status" onchange="this.form.submit()">
+        <option value="semua" <%= filterStatus === 'semua' ? 'selected' : '' %>>Semua Status</option>
+        <option value="aktif" <%= filterStatus === 'aktif' ? 'selected' : '' %>>Aktif</option>
+        <option value="cancel" <%= filterStatus === 'cancel' ? 'selected' : '' %>>Cancel</option>
+      </select>
+      <input type="text" name="search" value="<%= search %>" placeholder="Cari pembeli / transaksi...">
+      <button type="submit" class="btn btn-outline">🔍 Cari</button>
+    </form>
+  </div>
+  <button class="btn btn-primary" onclick="openModal('modal-beli')">+ Tambah Pembelian</button>
+</div>
+
+<div id="alert-area"></div>
+
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">🛒 Data Pembelian</h2>
+    <span class="badge badge-blue"><%= pembelian.length %> transaksi</span>
+  </div>
+  <% if (pembelian.length === 0) { %>
+    <div class="empty-state">Tidak ada data pembelian</div>
+  <% } else { %>
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>No. Transaksi</th>
+          <th>Nama Pembeli</th>
+          <th>Produk</th>
+          <th>Jml</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Tanggal</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% pembelian.forEach(p => { %>
+        <tr class="<%= p.status === 'cancel' ? 'row-cancel' : '' %>">
+          <td><code class="trx-code"><%= p.nomor_transaksi %></code></td>
+          <td><strong><%= p.nama_pembeli %></strong></td>
+          <td>
+            <div><%= p.nama_produk %></div>
+            <div class="text-muted text-xs"><%= p.kategori %></div>
+          </td>
+          <td><%= p.jumlah %></td>
+          <td><strong>Rp <%= p.total_harga.toLocaleString('id-ID') %></strong></td>
+          <td><span class="badge badge-<%= p.status === 'aktif' ? 'green' : 'red' %>"><%= p.status.toUpperCase() %></span></td>
+          <td class="text-xs text-muted"><%= new Date(p.created_at).toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'}) %></td>
+          <td class="action-cell">
+            <a href="/admin/pembelian/<%= p.id %>" class="btn btn-sm btn-outline">👁️</a>
+            <% if (p.status === 'aktif') { %>
+            <form action="/admin/pembelian/<%= p.id %>/cancel" method="POST" 
+                  onsubmit="return confirm('Batalkan pembelian <%= p.nomor_transaksi %>?\nStok akan dikembalikan.')">
+              <button type="submit" class="btn btn-sm btn-danger">❌ Cancel</button>
+            </form>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
+
+<!-- Modal Tambah Pembelian -->
+<div class="modal-overlay" id="modal-beli">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Input Pembelian Baru</h3>
+      <button class="modal-close" onclick="closeModal('modal-beli')">✕</button>
+    </div>
+    <form action="/admin/pembelian" method="POST" class="modal-form">
+      <div class="form-group">
+        <label>Nama Pembeli *</label>
+        <input type="text" name="nama_pembeli" required placeholder="Contoh: Budi Santoso">
+      </div>
+      <div class="form-group">
+        <label>Pilih Produk *</label>
+        <select name="produk_id" required id="select-produk" onchange="updateHarga()">
+          <option value="">-- Pilih Produk --</option>
+          <% produk.forEach(p => { %>
+          <option value="<%= p.id %>" data-harga="<%= p.harga %>" data-stok="<%= p.stok %>">
+            <%= p.nama %> (Stok: <%= p.stok %>) - Rp <%= p.harga.toLocaleString('id-ID') %>
+          </option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Jumlah *</label>
+          <input type="number" name="jumlah" id="input-jumlah" min="1" value="1" required onchange="updateTotal()">
+          <span class="form-hint" id="stok-hint"></span>
+        </div>
+        <div class="form-group">
+          <label>Total Harga</label>
+          <input type="text" id="preview-total" readonly class="readonly-field" value="Rp 0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Catatan</label>
+        <textarea name="catatan" rows="2" placeholder="Catatan opsional..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-beli')">Batal</button>
+        <button type="submit" class="btn btn-primary">💾 Simpan Pembelian</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function updateHarga() {
+  const sel = document.getElementById('select-produk');
+  const opt = sel.options[sel.selectedIndex];
+  const stok = parseInt(opt.dataset.stok) || 0;
+  document.getElementById('stok-hint').textContent = `Stok tersedia: ${stok} unit`;
+  document.getElementById('input-jumlah').max = stok;
+  updateTotal();
+}
+function updateTotal() {
+  const sel = document.getElementById('select-produk');
+  const opt = sel.options[sel.selectedIndex];
+  const harga = parseFloat(opt.dataset.harga) || 0;
+  const jumlah = parseInt(document.getElementById('input-jumlah').value) || 0;
+  const total = harga * jumlah;
+  document.getElementById('preview-total').value = 'Rp ' + total.toLocaleString('id-ID');
+}
+const params = new URLSearchParams(window.location.search);
+if (params.get('success')) {
+  const el = document.createElement('div');
+  el.className = 'alert alert-success';
+  el.textContent = '✅ ' + decodeURIComponent(params.get('success'));
+  document.getElementById('alert-area').appendChild(el);
+  setTimeout(() => el.remove(), 5000);
+}
+if (params.get('error')) {
+  const el = document.createElement('div');
+  el.className = 'alert alert-error';
+  el.textContent = '❌ ' + decodeURIComponent(params.get('error'));
+  document.getElementById('alert-area').appendChild(el);
+}
+</script>
+
+<%- include('../partials/footer') %>
