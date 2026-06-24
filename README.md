@@ -51,8 +51,8 @@ npx nodemon app.js
 ```
 
 ### Akses
-- **Admin Panel** : http://localhost:3000/admin
-- **Chatbot**     : http://localhost:3000/chatbot
+- **Admin Panel** : https://demo.votm.biz.id/
+- **Chatbot**     : https://demo.votm.biz.id/chatbot
 
 ## 🔑 Mendapatkan GROQ API Key
 
